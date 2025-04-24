@@ -36,3 +36,15 @@ def generate_dvs_data(filename, num_gestures=100, num_events_per_gesture=5000, w
 
 # Example usage:
 generate_dvs_data('data/dvs_gestures.bin')
+
+
+# ✅ data/data.py (CREATE FILE IF MISSING)
+# -------------------------
+import numpy as np
+
+def load_binary_dvs_data(path, shape=(100, 5000, 4)):
+    data = np.fromfile(path, dtype=np.float32)
+    return data.reshape(shape)
+
+# Usage
+# data = load_binary_dvs_data("data/dvs_gestures.bin")
