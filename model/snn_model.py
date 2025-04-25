@@ -1,4 +1,3 @@
-# File: model/snn_model.brian2.py
 from brian2 import *
 import numpy as np
 
@@ -10,21 +9,36 @@ duration = 1000 * ms  # Simulation duration
 tau = 10 * ms  # Membrane time constant
 
 # Create the neuron groups
-input_neurons = NeuronGroup(input_size, 'dv/dt = -v/tau + I : 1', threshold='v>1', reset='v=0', method='exact')
-hidden_neurons = NeuronGroup(hidden_size, 'dv/dt = -v/tau + I : 1', threshold='v>1', reset='v=0', method='exact')
-output_neurons = NeuronGroup(output_size, 'dv/dt = -v/tau + I : 1', threshold='v>1', reset='v=0', method='exact')
+input_neurons = NeuronGroup(input_size, 
+                             '''dv/dt = -v/tau + I : 1
+                                I : 1''',  # Define I as a state variable
+                             threshold='v>1', reset='v=0', method='exact')
+
+hidden_neurons = NeuronGroup(hidden_size, 
+                              '''dv/dt = -v/tau + I : 1
+                                 I : 1''',  # Define I as a state variable
+                              threshold='v>1', reset='v=0', method='exact')
+
+output_neurons = NeuronGroup(output_size, 
+                              '''dv/dt = -v/tau + I : 1
+                                 I : 1''',  # Define I as a state variable
+                              threshold='v>1', reset='v=0', method='exact')
 
 # Create synapses
 input_to_hidden = Synapses(input_neurons, hidden_neurons, 'w : 1', on_pre='v_post += w')
 hidden_to_output = Synapses(hidden_neurons, output_neurons, 'w : 1', on_pre='v_post += w')
 
-# Randomly initialize synaptic weights
+# Connect the synapses (must connect first before setting weights)
+input_to_hidden.connect(p=0.1)  # Connect with probability 10%
+hidden_to_output.connect(p=0.1)
+
+# Now set random weights for the synapses
 input_to_hidden.w = 'rand()'  # Random weights between 0 and 1
 hidden_to_output.w = 'rand()'
 
 # Create spike generators for input neurons (simulating DVS spikes or random input)
 input_spikes = PoissonGroup(input_size, rates='20*Hz')  # Random spike trains at 20 Hz
-input_neurons.I = 'input_spikes * 0.2'
+input_neurons.I = 'input_spikes * 0.2'  # Set the input current based on spikes
 
 # Record the spikes of neurons
 spike_monitor_input = SpikeMonitor(input_neurons)

@@ -1,4 +1,4 @@
-import nest_asyncio as nest
+import nest
 import numpy as np
 from model.model import create_snn
 

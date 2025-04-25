@@ -1,4 +1,4 @@
-import nest_asyncio as nest
+import nest
 import numpy as np
 
 def create_snn():
@@ -12,7 +12,7 @@ def create_snn():
     output_neurons = nest.Create('iaf_psc_alpha', 2)  # Assuming binary classification
 
     # Create spike detectors
-    spike_detector = nest.Create('spike_detector')
+    spike_detector = nest.Create('spike_recorder')
 
     # Connect neurons
     nest.Connect(input_neurons, excitatory_neurons, syn_spec={'weight': 1.0})
