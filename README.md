@@ -94,5 +94,3 @@ The inference engine will print the spike output of each output neuron for each 
 - **Hardware Deployment:** The code is intended for deployment on embedded systems like the Cortex M4. The `main.cpp` file is where the inference engine runs on the embedded device.
 
 ---
-
-**Made with ❤️ for embedded neuromorphic computing and BCI-based gesture recognition.**
