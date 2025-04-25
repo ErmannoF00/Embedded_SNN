@@ -1,0 +1,25 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter notebooks (if used)
+*.ipynb_checkpoints
+
+# Data / outputs
+*.npy
+*.npz
+*.bin
+*.csv
+output/
+
+# C++ builds
+*.o
+*.out
+*.exe
+
+# Submodule build files (you should build NEST in a separate directory)
+nest-simulator/build/
+nest-simulator/bin/
+nest-simulator/*.log

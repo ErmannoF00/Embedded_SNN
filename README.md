@@ -1,7 +1,7 @@
 
-# Embedded SNN for BCI Gesture Recognition
+# Embedded SNN for EEG Classification
 
-An embedded-friendly Spiking Neural Network (SNN) pipeline for EEG-based gesture classification using BCI data from OpenBCI. This project uses **NEST simulator** for model simulation and a **C++ inference engine** for deployment on embedded hardware, such as Cortex M4.
+An embedded-friendly Spiking Neural Network (SNN) pipeline for EEG-based data classification using BCI data from OpenBCI. This project uses **NEST simulator** for model simulation and a **C++ inference engine** for deployment on embedded hardware, such as Cortex M4.
 
 ## 📁 Project Structure
 ```
@@ -9,7 +9,7 @@ eeg-snn/
 ├── data/
 │   ├── preprocessing/
 │   │   └── eeg_process.py           # Preprocessing of EEG data (Filtering, feature extraction)
-│   ├── data.py                     # Data loading and conversion for SNN input
+│   ├── data.py                      # Data loading and conversion for SNN input
 │   └── OpenBCI_EEG/                 # Forked OpenBCI repository or submodule for EEG data
 ├── model/
 │   ├── model.py                    # Neural network model (optional high-level model)
