@@ -1,9 +1,4 @@
-
-<<<<<<< HEAD
-# Embedded SNN for EEG Classification
-=======
 # Embedded SNN for EEG classification
->>>>>>> 2ff1d70210e55f15301b36da27359758f5cb2a2c
 
 An embedded-friendly Spiking Neural Network (SNN) pipeline for EEG-based data classification using BCI data from OpenBCI. This project uses **NEST simulator** for model simulation and a **C++ inference engine** for deployment on embedded hardware, such as Cortex M4.
 
@@ -11,15 +6,8 @@ An embedded-friendly Spiking Neural Network (SNN) pipeline for EEG-based data cl
 ```
 eeg-snn/
 ├── data/
-<<<<<<< HEAD
-│   ├── preprocessing/
-│   │   └── eeg_process.py           # Preprocessing of EEG data (Filtering, feature extraction)
-│   ├── data.py                      # Data loading and conversion for SNN input
 │   └── OpenBCI_EEG/                 # Forked OpenBCI repository or submodule for EEG data
-=======
 │   ├── eeg_process.py              # Preprocessing of EEG data (Filtering, feature extraction)
-│   └── OpenBCI_EEG/                # Forked OpenBCI repository or submodule for EEG data
->>>>>>> 2ff1d70210e55f15301b36da27359758f5cb2a2c
 ├── model/
 │   ├── model.py                    # Neural network model (optional high-level model)
 │   └── snn_model.py                # SNN model definition (for NEST simulation)
