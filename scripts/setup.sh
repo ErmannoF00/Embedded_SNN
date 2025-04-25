@@ -12,4 +12,4 @@ git clone https://github.com/ErmannoF00/Embedded_SNN.git
 cd Embedded_SNN
 
 # Run the simulation
-python3 simulate.py
+python3 scripts/simulate.py
