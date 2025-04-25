@@ -7,10 +7,8 @@ An embedded-friendly Spiking Neural Network (SNN) pipeline for EEG-based data cl
 ```
 eeg-snn/
 ├── data/
-│   ├── preprocessing/
-│   │   └── eeg_process.py           # Preprocessing of EEG data (Filtering, feature extraction)
-│   ├── data.py                      # Data loading and conversion for SNN input
-│   └── OpenBCI_EEG/                 # Forked OpenBCI repository or submodule for EEG data
+│   ├── eeg_process.py              # Preprocessing of EEG data (Filtering, feature extraction)
+│   └── OpenBCI_EEG/                # Forked OpenBCI repository or submodule for EEG data
 ├── model/
 │   ├── model.py                    # Neural network model (optional high-level model)
 │   └── snn_model.py                # SNN model definition (for NEST simulation)
