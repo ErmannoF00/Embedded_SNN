@@ -1,5 +1,9 @@
 {
-    "files.associations": {
-        "xstring": "cpp"
-    }
+  "cmake.sourceDirectory": "${workspaceFolder}/deployment",
+  "cmake.buildDirectory": "${workspaceFolder}/deployment/build",
+  "cmake.configureOnOpen": true,
+  "cmake.generator": "MinGW Makefiles",
+  "files.associations": {
+    "xstring": "cpp"
+  }
 }

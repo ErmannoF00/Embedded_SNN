@@ -4,67 +4,73 @@ from scipy.signal import butter, lfilter
 from pathlib import Path
 
 
-# ----------------------------------------------
-# 1. FILTER + LOADER
-# ----------------------------------------------
+# Bandpass filter
 def butter_bandpass(lowcut, highcut, fs, order=4):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
     return butter(order, [low, high], btype='band')
 
+
 def bandpass_filter(data, lowcut=1.0, highcut=50.0, fs=250.0, order=4):
     b, a = butter_bandpass(lowcut, highcut, fs, order)
     return lfilter(b, a, data)
 
-def load_openbci_sample_data(filepath, fs=250.0, segment_duration=1.0):
-    df = pd.read_csv(filepath, skiprows=5, delimiter=',', engine='python')  # Use ',' as delimiter
-    print("Columns in file:", df.columns.tolist())
 
-    # Manually select columns (assuming channels are in the 2nd and 3rd columns)
-    channels = df.columns[1:3]  # Adjust according to your actual column layout
-    
+# Load and preprocess OpenBCI EEG data
+def load_openbci_data(filepath, fs=250, segment_duration=1.0):
+
+    df = pd.read_csv(filepath, skiprows=4)  # Header starts at line 5
+    df.columns = df.columns.str.strip()     # Strip spaces
+    print(df.columns)
+    print(df.shape)
+
+    # Correct filtering: we use 'EXG Channel' not 'EEG'
+    eeg_channels = [col for col in df.columns if 'EXG Channel' in col]
+
     segment_len = int(fs * segment_duration)
     num_segments = len(df) // segment_len
-    eeg_segments = []
+    segments = []
 
     for i in range(num_segments):
         segment = []
-        for ch in channels:
-            raw_signal = df[ch].values[i * segment_len:(i + 1) * segment_len]
-            filtered = bandpass_filter(raw_signal, fs=fs)
-            normed = (filtered - np.mean(filtered)) / np.std(filtered)
-            segment.append(normed)
-        eeg_segments.append(np.stack(segment, axis=1))
+        for ch in eeg_channels:
+            raw = df[ch].values[i * segment_len:(i + 1) * segment_len]
 
-    return eeg_segments
+            if len(raw) != segment_len:
+                continue
 
-def save_eeg_data_to_txt(segments, output_folder="data", filename="eeg_encoded_input.txt"):
-    # Ensure the output folder exists
-    output_folder_path = Path(__file__).resolve().parents[1] / output_folder
-    output_folder_path.mkdir(parents=True, exist_ok=True)  # Create the folder if it doesn't exist
+            filtered = bandpass_filter(raw)
+            if np.std(filtered) == 0:  # Avoid divide-by-zero
+                continue
 
-    # Create the full path for the output file
-    file_path = output_folder_path / filename
+            normalized = (filtered - np.mean(filtered)) / np.std(filtered)
+            segment.append(normalized)
+
+        # Stack only if all channels are valid
+        if len(segment) == len(eeg_channels):
+            stacked = np.stack(segment, axis=1).flatten()
+            segments.append(stacked)
+
+    return segments
+
+
+
+def save_segments(segments, output_folder="data", filename="simulate_input.txt"):
+    Path(output_folder).mkdir(parents=True, exist_ok=True)
+    file_path = Path(output_folder) / filename
     
-    with open(file_path, 'w') as file:
-        for segment in segments:
-            for row in segment:
-                file.write(','.join(map(str, row)) + '\n')  # Write each row in CSV format
-    print(f"EEG data saved to {file_path}")
+    with open(file_path, 'w') as f:
+        for idx, seg in enumerate(segments):
+            label = 0 if idx % 2 == 0 else 1  # Simulated label
+            line = ','.join([str(label)] + [str(x) for x in seg])
+            f.write(line + '\n')
+    print(f"Saved {len(segments)} segments to {file_path}")
 
-# Get the root directory of your project (assuming this file is in the root or a subfolder)
-project_root = Path(__file__).resolve().parents[1] 
 
-# Build the path to the EEG data file
-eeg_data_path = project_root / "data" / "OpenBCI_EEG" / "OpenBCI_GUI" / "data" / "EEG_Sample_Data" / "OpenBCI_GUI-v6-meditation.txt"
 
-# Load EEG data and process it
-segments = load_openbci_sample_data(eeg_data_path)
-
-# Save the EEG data to a .txt file in the 'data' folder
-save_eeg_data_to_txt(segments)
-
-# Print some details about the segments
-print("Num segments:", len(segments))
-print("Shape of first segment:", segments[0].shape)
+# Example usage
+if __name__ == "__main__":
+    eeg_path = Path("data/OpenBCI_EEG/OpenBCI_GUI/data/EEG_Sample_Data/OpenBCI_GUI-v6-meditation.txt")
+    segments = load_openbci_data(eeg_path)
+    save_segments(segments)

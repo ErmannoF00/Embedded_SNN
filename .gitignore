@@ -4,10 +4,10 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Jupyter notebooks (if used)
+# Jupyter checkpoints
 *.ipynb_checkpoints
 
-# Data / outputs
+# Model/data outputs
 *.npy
 *.npz
 *.bin
@@ -18,8 +18,7 @@ output/
 *.o
 *.out
 *.exe
+build/
 
-# Submodule build files (you should build NEST in a separate directory)
-nest-simulator/build/
-nest-simulator/bin/
-nest-simulator/*.log
+# VS Code
+.vscode/

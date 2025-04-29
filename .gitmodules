@@ -1,6 +1,4 @@
 [submodule "data/OpenBCI_EEG"]
 	path = data/OpenBCI_EEG
 	url = https://github.com/OpenBCI/OpenBCI_GUI/tree/master/OpenBCI_GUI/data/EEG_Sample_Data
-[submodule "nest-simulator"]
-	path = nest-simulator
-	url = https://github.com/nest/nest-simulator.git
+
