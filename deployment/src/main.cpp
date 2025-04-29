@@ -30,10 +30,10 @@ int main() {
     int output_size = 2;      // Binary classifier (e.g., meditative vs not)
 
     SNN snn(input_size, hidden_size, output_size);
-    snn.load_weights("weights/weights_input_hidden.txt", "weights/weights_hidden_output.txt");
+    snn.load_weights("../weights/weights_input_hidden.txt", "../weights/weights_hidden_output.txt");
 
     int true_label = -1;
-    std::vector<float> input = load_input("data/simulate_input.txt", true_label);
+    std::vector<float> input = load_input("../../data/simulate_input.txt", true_label);
 
     for (int t = 0; t < 20; ++t)  // Simulate for 20 time steps
         snn.forward(input);
