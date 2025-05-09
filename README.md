@@ -10,15 +10,15 @@ Embedded_SNN/
 │   └── eeg_process.py             # Python script to preprocess EEG data
 ├── scripts/
 │   ├── train.py                   # Trains the AdEx SNN model using Brian2
-│   └── export_weights.py         # Converts NumPy weights to .txt format for C++
+│   └── export_weights.py          # Converts NumPy weights to .txt format for C++
 ├── deployment/
 │   ├── src/
 │   │   ├── main.cpp               # Inference entry point
-│   │   ├── snn_core.cpp          # Core logic for AdEx neurons
-│   │   └── snn_core.h            # Header file for the SNN engine
-│   ├── weights/                  # Text-formatted weight files
-│   └── CMakeLists.txt            # CMake build configuration
-├── run_all.py                    # Runs preprocessing, training, and export
+│   │   ├── snn_core.cpp           # Core logic for AdEx neurons
+│   │   └── snn_core.h             # Header file for the SNN engine
+│   ├── weights/                   # Text-formatted weight files
+│   └── CMakeLists.txt             # CMake build configuration
+├── run_all.py                     # Runs preprocessing, training, and export
 └── README.md
 ```
 
