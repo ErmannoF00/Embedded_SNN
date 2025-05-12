@@ -13,9 +13,8 @@ Embedded_SNN/
 │   ├── OpenBCI_EEG/               # Raw EEG dataset
 │   └── eeg_process.py             # Preprocessing script
 ├── scripts/
-<<<<<<< HEAD
 │   ├── train.py                   # Brian2 training of AdEx SNN
-│   └── export_weights.py          # NumPy-to-text weight export
+│   └── export_weights.py         # NumPy-to-text weight export
 ├── deployment/
 │   ├── src/
 │   │   ├── main.cpp               # C++ entrypoint (optional for PC test)
