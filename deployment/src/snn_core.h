@@ -38,7 +38,7 @@ class SNN {
 public:
     SNN(int input_size, int hidden_size, int output_size);
 
-    void forward(const std::vector<float>& input, int timesteps);
+    void forward(const float* input, int timesteps);
     int classify() const;
     void reset();
 

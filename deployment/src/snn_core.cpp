@@ -1,10 +1,10 @@
-// ========================= snn_core.cpp =========================
 #include "snn_core.h"
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <limits>
 #include <cstdlib>
+#include <cstdio> 
 
 namespace snn {
 
@@ -15,7 +15,7 @@ void AdExNeuron::update() {
     w += dw;
     spiked = v > 1.0f;
     if (spiked) {
-        v = -0.5f; // hyperpolarize to prevent immediate next spike
+        v = -0.5f;
         w += 0.1f;
         spike_count++;
     }
@@ -66,35 +66,36 @@ void SNN::initialize_weights(float scale) {
             w = static_cast<float>(rand()) / RAND_MAX * scale;
 }
 
-void SNN::forward(const std::vector<float>& input, int timesteps = 20) {
-    if (input.size() != static_cast<size_t>(input_size)) {
-        std::cerr << "Input size mismatch! Expected: " << input_size << ", Got: " << input.size() << "\n";
-        return;
-    }
-
+void SNN::forward(const float* input, int timesteps) {
     for (int t = 0; t < timesteps; ++t) {
-        // Reset currents each timestep
         for (auto& neuron : hidden_layer) neuron.I = 0.0f;
         for (auto& neuron : output_layer) neuron.I = 0.0f;
 
-        // Feed input into hidden layer each timestep
-        for (int i = 0; i < input_size; ++i)
-            for (int j = 0; j < hidden_size; ++j)
+        for (int i = 0; i < input_size; ++i) {
+            for (int j = 0; j < hidden_size; ++j) {
                 hidden_layer[j].I += input[i] * weights_input_hidden[i][j];
+            }
+        }
 
         for (auto& neuron : hidden_layer) neuron.update();
 
-        for (int j = 0; j < hidden_size; ++j)
-            if (hidden_layer[j].spiked)
-                for (int k = 0; k < output_size; ++k)
+        for (int j = 0; j < hidden_size; ++j) {
+            if (hidden_layer[j].spiked) {
+                for (int k = 0; k < output_size; ++k) {
                     output_layer[k].I += weights_hidden_output[j][k];
+                }
+            }
+        }
 
         for (auto& neuron : output_layer) neuron.update();
-
         recorder.record(output_layer);
     }
-}
 
+    // DEBUG print
+    for (int i = 0; i < output_size; ++i) {
+        printf("Neuron %d: spikes = %d\n", i, output_layer[i].spike_count);
+    }
+}
 
 void SNN::reset() {
     for (auto& n : hidden_layer) n.reset();
@@ -113,7 +114,6 @@ int SNN::classify() const {
     }
     return max_idx;
 }
-
 
 void SNN::load_weights(const std::string& path_ih, const std::string& path_ho) {
     std::ifstream file_ih(path_ih);
