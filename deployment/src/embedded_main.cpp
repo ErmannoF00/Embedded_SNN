@@ -1,4 +1,3 @@
-// src/embedded_main.cpp
 #include "snn_core.h"
 #include <cstdio>
 
