@@ -1,24 +1,10 @@
-# Python artifacts
+.venv/
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-
-# Jupyter checkpoints
-*.ipynb_checkpoints
-
-# Model/data outputs
-*.npy
-*.npz
-*.bin
-*.csv
-output/
-
-# C++ builds
-*.o
-*.out
-*.exe
+.pytest_cache/
+artifacts/
 build/
-
-# VS Code
+deployment/build/
+data/
 .vscode/
+.idea/

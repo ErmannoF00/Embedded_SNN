@@ -1,105 +1,62 @@
-# Embedded SNN for EEG Classification
+# Embedded SNN
 
-A lightweight spiking neural network (SNN) engine tailored for **EEG classification** on **embedded devices** (e.g., Cortex-M4).
-The training is done in Python using **Brian2**, and the final model is deployed using a minimal **C++ runtime**.
+**EEG classification with spiking neural networks and a portable C++ inference runtime.**
 
----
+Research prototype combining supervised adaptive leaky integrate-and-fire (ALIF) networks, subject-held-out evaluation, early-exit policies, and host-side numerical verification.
 
-## 📁 Project Structure
+> **Status:** Software research prototype. EEG decoding accuracy remains close to chance; MCU firmware and device-level energy measurements are not yet available.
 
-```
-Embedded_SNN/
-├── data/
-│   ├── OpenBCI_EEG/               # Raw EEG dataset
-│   └── eeg_process.py             # Preprocessing script
-├── scripts/
-│   ├── train.py                   # Brian2 training of AdEx SNN
-│   └── export_weights.py         # NumPy-to-text weight export
-├── deployment/
-│   ├── src/
-│   │   ├── main.cpp               # C++ entrypoint (optional for PC test)
-│   │   ├── embedded_main.cpp      # Embedded target main
-│   │   ├── snn_core.cpp/.h        # Minimal AdEx SNN C++ engine
-│   │   └── startup_stm32f4xx.s    # Assembly startup for Cortex-M4
-│   ├── weights/                  # Text-formatted weight files
-│   ├── linker.ld                 # Custom linker script for embedded
-│   └── CMakeLists.txt            # Build config for CMake
-├── run_all.py                    # Run preprocessing + training + export
-└── README.md                     # You're reading it!
+## Pipeline
+
+```text
+PhysioNet EEG → 8 channels → 1 s windows → 32 features
+                                               ↓
+                                  32 → 48 ALIF → 2 classes
+                                               ↓
+                               Early exit / C++ host inference
 ```
 
----
+Two feature representations are evaluated: amplitude statistics and mu/beta spectral log-power. The network uses 20 simulation steps and is trained with surrogate gradients.
 
-## Python: Preprocess, Train, and Export
+## Results
 
-1. **Install Dependencies**
+Five subject-held-out folds; 20 subjects, 900 trials, 2,700 windows.
 
-   ```bash
-   pip install numpy scipy pandas brian2
-   ```
+| Model | Accuracy |
+|---|---:|
+| ALIF, amplitude features | 51.56% |
+| ALIF, spectral features | 54.04% |
+| Logistic regression, spectral | 54.26% |
+| MLP, spectral | 52.30% |
 
-2. **Preprocess EEG**
+For the spectral ALIF, a validation-calibrated early-exit policy averaged **16.02/20 steps** (19.89% fewer recurrent steps), with **0 observed class disagreements** against full-step inference on these test windows. This does **not** establish energy or latency savings, or a guaranteed zero-error stopping policy.
 
-   ```bash
-   python data/eeg_process.py
-   ```
+See [methods](research_addon/docs/METHODS.md) and [results](research_addon/docs/RESULTS.md) for the experimental protocol and limitations.
 
-3. **Train the SNN**
-
-   ```bash
-   python scripts/train.py
-   ```
-
-4. **Export weights to text format**
-
-   ```bash
-   python scripts/export_weights.py
-   ```
-
----
-
-## C++: Embedded Inference
-
-### Build for Cortex-M4 with CMake
+## Quick start
 
 ```bash
-cd deployment
-cmake -S . -B build
-cmake --build build
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r research_addon/requirements-train.txt
+cd research_addon
+make check
 ```
 
-> ⚠️ Requires `arm-none-eabi-g++`, `newlib`, and `cmake`.
+The check runs host-side software tests; it does not download EEG data or validate physical MCU execution. Training and evaluation commands are in [research_addon/README.md](research_addon/README.md).
 
-### Run on QEMU
+## Repository
 
-```bash
-cd build
-qemu-system-arm -M olimex-stm32-h405 -cpu cortex-m4 -nographic -semihosting -kernel snn_embedded.elf
-```
+| Path | Purpose |
+|---|---|
+| `snn_pipeline/` | Core supervised SNN and model export |
+| `deployment/` | Portable C++ inference reference |
+| `research_addon/` | EEG evaluation, early exit, C++ parity checks |
+| `tests/` | Core regression tests |
+| `docs/` | Core design notes |
 
----
+## Scope
 
-## Output
+The current models consume window-derived features, not asynchronous raw EEG events. Spectral feature extraction is host-side. The repository does not claim clinical BCI validation, thought decoding, working STM32 firmware, or measured power efficiency.
 
-You will see semihosted debug prints such as:
-
-```
-Booting embedded SNN...
-Neuron 0: spikes = 3
-Neuron 1: spikes = 6
-Prediction = 1
-```
-
----
-
-## 📌 Notes
-
-* All dynamic memory is removed from the embedded C++ version.
-* Weights are loaded statically into arrays (`float[]`) to fit embedded constraints.
-* STL, file I/O, and exceptions are stripped for bare-metal compatibility.
-
----
-
-## 📜 License
-
-This project is released under the MIT License.
+**Dataset:** [PhysioNet EEG Motor Movement/Imagery Database](https://physionet.org/content/eegmmidb/1.0.0/). No raw EEG recordings are distributed here.

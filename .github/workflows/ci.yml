@@ -1,0 +1,19 @@
+name: snn-inference-regression
+on: [push, pull_request]
+jobs:
+  train-and-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Train reproducible synthetic benchmark and check full C++ parity
+        run: make check
+      - name: Host benchmark (not MCU performance)
+        run: make benchmark
+      - name: Sanitizer build and runtime tests
+        run: make sanitized

@@ -1,0 +1,2 @@
+-r requirements-addon.txt
+torch>=2.1,<3

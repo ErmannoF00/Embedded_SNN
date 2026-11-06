@@ -1,29 +1,30 @@
-cmake_minimum_required(VERSION 3.13)
-project(AdEx_SNN_Embedded C CXX ASM)
+cmake_minimum_required(VERSION 3.16)
+project(embedded_snn LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+option(SNN_SANITIZERS "Host address/undefined-behavior sanitizers" OFF)
+if(SNN_SANITIZERS)
+  add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer -O1 -g)
+  add_link_options(-fsanitize=address,undefined)
+endif()
 
-set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_PROCESSOR arm)
+add_library(snn_runtime STATIC src/snn_runtime.cpp)
+target_include_directories(snn_runtime PUBLIC include generated)
+target_compile_options(snn_runtime PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
+# The inference library does not need heap allocation, exception machinery or RTTI.
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  target_compile_options(snn_runtime PRIVATE -fno-exceptions -fno-rtti)
+endif()
 
-set(CMAKE_C_COMPILER arm-none-eabi-gcc)
-set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
-set(CMAKE_ASM_COMPILER arm-none-eabi-as)
+add_executable(snn_host src/host_cli.cpp)
+target_link_libraries(snn_host PRIVATE snn_runtime)
+target_compile_options(snn_host PRIVATE -Wall -Wextra -Wpedantic)
 
-set(CMAKE_C_FLAGS "-mcpu=cortex-m4 -mthumb -O2")
-set(CMAKE_CXX_FLAGS "-mcpu=cortex-m4 -mthumb -O2 -fno-exceptions -fno-rtti")
-set(CMAKE_EXE_LINKER_FLAGS "-T${CMAKE_SOURCE_DIR}/linker.ld -Wl,--gc-sections --specs=rdimon.specs -lc -lrdimon")
+add_executable(snn_selftest src/snn_selftest.cpp)
+target_link_libraries(snn_selftest PRIVATE snn_runtime)
 
-include_directories(${PROJECT_SOURCE_DIR}/src)
+add_executable(snn_benchmark src/snn_benchmark.cpp)
+target_link_libraries(snn_benchmark PRIVATE snn_runtime)
 
-set_source_files_properties(src/startup_stm32f4xx.s PROPERTIES LANGUAGE ASM)
-
-add_executable(snn_embedded
-    src/embedded_main.cpp
-    src/snn_core.cpp
-)
-
-set_target_properties(snn_embedded PROPERTIES OUTPUT_NAME "snn_embedded.elf")
-
-add_custom_command(TARGET snn_embedded POST_BUILD
-    COMMAND arm-none-eabi-objcopy -O binary snn_embedded.elf snn_embedded.bin
-    COMMENT "Generating binary file"
-)
+enable_testing()
+add_test(NAME snn_selftest COMMAND snn_selftest)

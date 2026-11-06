@@ -1,0 +1,16 @@
+# Local environments and interpreter caches
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+
+# Generated code, compiled binaries and experimental outputs
+cpp/build/
+cpp/generated/
+artifacts/
+results/
+data/
+*.edf
+*.npz
+*.pt
+*.pth

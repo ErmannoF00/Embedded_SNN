@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="680" viewBox="0 0 1180 680" role="img" aria-labelledby="t d">
+ <title id="t">Embedded SNN research extension architecture</title>
+ <desc id="d">Offline PhysioNet data, supervised training, separate MCU replay path and experimental early exit.</desc>
+ <style>
+  text{font-family:DejaVu Sans,Arial,sans-serif;fill:#172434} .head{font-weight:700;font-size:25px}
+  .sub{font-weight:700;font-size:16px}.note{font-size:13px}.b{fill:#eff5fb;stroke:#4b799e;stroke-width:1.6}
+  .research{fill:#f0f7ed;stroke:#6b915e;stroke-width:1.5}.blocked{fill:#fff0e9;stroke:#c67a51;stroke-width:1.6}
+  .ar{stroke:#4d6478;stroke-width:2;fill:none;marker-end:url(#a)}
+ </style>
+ <defs><marker id="a" markerWidth="11" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10Z" fill="#4d6478"/></marker></defs>
+ <rect width="1180" height="680" fill="white"/>
+ <text x="35" y="44" class="head">Embedded SNN — verified software vs planned hardware</text>
+ <text x="35" y="68" class="note">Add-on scope • 2026-11-06 • orange means NOT IMPLEMENTED or NOT MEASURED</text>
+ <text x="40" y="106" class="sub">A · Training / subject-disjoint evaluation</text>
+ <rect class="b" x="40" y="129" rx="10" width="198" height="78"/>
+ <text x="139" y="154" text-anchor="middle" class="sub">PhysioNet EEGMMIDB</text><text x="139" y="174" text-anchor="middle" class="note">160 Hz × 64 → 250 Hz × 8</text><text x="139" y="192" text-anchor="middle" class="note">real T1/T2 annotations</text>
+ <rect class="b" x="282" y="129" rx="10" width="196" height="78"/>
+ <text x="380" y="154" text-anchor="middle" class="sub">Subject-wise split</text><text x="380" y="174" text-anchor="middle" class="note">train / val / test</text><text x="380" y="192" text-anchor="middle" class="note">no group crossover</text>
+ <rect class="b" x="522" y="129" rx="10" width="196" height="78"/>
+ <text x="620" y="154" text-anchor="middle" class="sub">32 frozen features</text><text x="620" y="174" text-anchor="middle" class="note">RMS, |x|, diff RMS, ZCR</text><text x="620" y="192" text-anchor="middle" class="note">fit scaler on train only</text>
+ <rect class="b" x="762" y="129" rx="10" width="176" height="78"/>
+ <text x="850" y="154" text-anchor="middle" class="sub">Supervised ALIF</text><text x="850" y="174" text-anchor="middle" class="note">32 → 48 → 2</text><text x="850" y="192" text-anchor="middle" class="note">20 recurrent steps</text>
+ <rect class="research" x="982" y="129" rx="10" width="158" height="78"/>
+ <text x="1061" y="154" text-anchor="middle" class="sub">Baselines</text><text x="1061" y="174" text-anchor="middle" class="note">LR + MLP</text><text x="1061" y="192" text-anchor="middle" class="note">subject metrics</text>
+ <path class="ar" d="M238 168H280"/><path class="ar" d="M478 168H520"/><path class="ar" d="M718 168H760"/><path class="ar" d="M938 168H980"/>
+ <rect class="research" x="762" y="260" rx="10" width="378" height="75"/>
+ <text x="951" y="287" text-anchor="middle" class="sub">Adaptive step controller (implemented in addon)</text>
+ <text x="951" y="310" text-anchor="middle" class="note">full-T • fixed-T • heuristic • bounded final class</text>
+ <path class="ar" d="M850 209V258"/>
+ <text x="40" y="393" class="sub">B · Deployment / reference and future target</text>
+ <rect class="b" x="40" y="420" rx="10" width="225" height="86"/>
+ <text x="152" y="446" text-anchor="middle" class="sub">Host replay reference</text><text x="152" y="467" text-anchor="middle" class="note">250×8 float32 windows</text><text x="152" y="486" text-anchor="middle" class="note">source/montage checked</text>
+ <rect class="b" x="309" y="420" rx="10" width="226" height="86"/>
+ <text x="422" y="446" text-anchor="middle" class="sub">C++17 reference kernel</text><text x="422" y="467" text-anchor="middle" class="note">features + ALIF + stopping</text><text x="422" y="486" text-anchor="middle" class="note">static buffers / parity tests</text>
+ <rect class="blocked" x="579" y="420" rx="10" width="249" height="86"/>
+ <text x="704" y="446" text-anchor="middle" class="sub">NUCLEO-F446RE</text><text x="704" y="467" text-anchor="middle" class="note">UART replay + ISR/DMA</text><text x="704" y="486" text-anchor="middle" class="note">firmware NOT BUILT / FLASHED</text>
+ <rect class="blocked" x="872" y="420" rx="10" width="268" height="86"/>
+ <text x="1006" y="446" text-anchor="middle" class="sub">Physical EEG acquisition</text><text x="1006" y="467" text-anchor="middle" class="note">OpenBCI Cyton (candidate)</text><text x="1006" y="486" text-anchor="middle" class="note">NOT integrated or validated</text>
+ <path class="ar" d="M265 462H307"/><path class="ar" d="M535 462H577"/>
+ <path class="ar" d="M828 462H870" stroke-dasharray="6 5"/>
+ <path class="ar" d="M951 335V365H422V418"/>
+ <rect class="research" x="40" y="560" rx="10" width="1100" height="78"/>
+ <text x="590" y="586" text-anchor="middle" class="sub">Required evidence before a public research or embedded-performance claim</text>
+ <text x="590" y="607" text-anchor="middle" class="note">Real EEG per-subject results • PyTorch/C++/device class-score parity • measured MCU cycles/RAM/flash/energy</text>
+ <text x="590" y="624" text-anchor="middle" class="note">Versioned exact checkpoint hash • full-T vs early-exit overhead and failure cases</text>
+</svg>
